@@ -95,11 +95,16 @@ function getPowerFunction(exponent) {
  *   getPolynom()      => null
  */
 function getPolynom(...arg) {
-  let result = 0;
-  arg.forEach((argumnent, index) => {
-    result += index;
-  });
-  return result;
+  if (arg) {
+    return (x) => {
+      let result = 0;
+      arg.forEach((argument, index) => {
+        result += argument * x ** (arg.length - index - 1);
+      });
+      return result;
+    };
+  }
+  return null;
 }
 
 /**
@@ -116,8 +121,15 @@ function getPolynom(...arg) {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const cash = {};
+  return (funcSignature) => {
+    if (funcSignature in cash) {
+      return cash[funcSignature];
+    }
+    cash[funcSignature] = func();
+    return cash[funcSignature];
+  };
 }
 
 /**
@@ -179,8 +191,10 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return (...secArg) => {
+    return fn(...args1, ...secArg);
+  };
 }
 
 /**
@@ -200,8 +214,18 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let startValue = startFrom;
+  let isExecuted = false;
+  return () => {
+    if (!isExecuted) {
+      startValue += 1;
+      isExecuted = true;
+      return startFrom;
+    }
+    startValue += 1;
+    return startValue - 1;
+  };
 }
 
 module.exports = {
